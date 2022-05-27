@@ -16,15 +16,54 @@
 
 package net.imoya.android.log
 
+import android.content.Context
 import android.util.Log
+import androidx.annotation.StringRes
 
 /**
- * [android.util.Log] wrapper
- *
- * @param minLevel Minimum output log level
+ * Template class for static log object
  */
 @Suppress("unused")
-class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
+open class StaticLogTemplate {
+    /**
+     * Initialize with [LogLevel]
+     *
+     * @param logLevel [LogLevel]
+     */
+    constructor(logLevel: LogLevel) {
+        logWrapper = LogWrapper(logLevel)
+    }
+
+    /**
+     * Initialize with [LogLevel.NONE]
+     */
+    constructor() : this(LogLevel.NONE)
+
+    /**
+     * [LogWrapper]
+     */
+    private var logWrapper: LogWrapper
+
+    /**
+     * Initialize log output
+     *
+     * @param logLevel [LogLevel]
+     */
+    @Suppress("weaker")
+    protected fun init(logLevel: LogLevel) {
+        logWrapper = LogWrapper(logLevel)
+    }
+
+    /**
+     * Initialize log output by [LogLevel] string resource ID
+     *
+     * @param context [Context]
+     * @param id String resource ID
+     */
+    protected fun init(context: Context, @StringRes id: Int) {
+        init(LogLevel.from(context.getString(id)))
+    }
+
     /**
      * Send a VERBOSE log message if minimum output log level <= [LogLevel.VERBOSE]
      *
@@ -32,8 +71,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun v(tag: String?, msg: String): Int {
-        return if (shouldOutput(LogLevel.VERBOSE)) Log.v(tag, msg) else 0
+    protected fun vImpl(tag: String?, msg: String): Int {
+        return logWrapper.v(tag, msg)
     }
 
     /**
@@ -43,8 +82,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun v(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.VERBOSE)) Log.v(tag, msgCallback()) else 0
+    protected fun vImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.v(tag, msgCallback)
     }
 
     /**
@@ -55,8 +94,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun v(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.VERBOSE)) Log.v(tag, msg, tr) else 0
+    protected fun vImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.v(tag, msg, tr)
     }
 
     /**
@@ -67,8 +106,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun v(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.VERBOSE)) Log.v(tag, msgCallback(), tr) else 0
+    protected fun vImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.v(tag, msgCallback, tr)
     }
 
     /**
@@ -78,8 +117,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun v(tag: String?, tr: Throwable): Int {
-        return if (shouldOutput(LogLevel.VERBOSE)) Log.v(tag, tr.toString(), tr) else 0
+    protected fun vImpl(tag: String?, tr: Throwable): Int {
+        return logWrapper.v(tag, tr)
     }
 
     /**
@@ -89,8 +128,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun d(tag: String?, msg: String): Int {
-        return if (shouldOutput(LogLevel.DEBUG)) Log.d(tag, msg) else 0
+    protected fun dImpl(tag: String?, msg: String): Int {
+        return logWrapper.d(tag, msg)
     }
 
     /**
@@ -100,8 +139,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun d(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.DEBUG)) Log.d(tag, msgCallback()) else 0
+    protected fun dImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.d(tag, msgCallback)
     }
 
     /**
@@ -112,8 +151,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun d(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.DEBUG)) Log.d(tag, msg, tr) else 0
+    protected fun dImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.d(tag, msg, tr)
     }
 
     /**
@@ -124,8 +163,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun d(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.DEBUG)) Log.d(tag, msgCallback(), tr) else 0
+    protected fun dImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.d(tag, msgCallback, tr)
     }
 
     /**
@@ -135,8 +174,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun d(tag: String?, tr: Throwable): Int {
-        return if (shouldOutput(LogLevel.DEBUG)) Log.d(tag, tr.toString(), tr) else 0
+    protected fun dImpl(tag: String?, tr: Throwable): Int {
+        return logWrapper.d(tag, tr)
     }
 
     /**
@@ -146,8 +185,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun i(tag: String?, msg: String?): Int {
-        return if (shouldOutput(LogLevel.INFO)) Log.i(tag, msg!!) else 0
+    protected fun iImpl(tag: String?, msg: String?): Int {
+        return logWrapper.i(tag, msg)
     }
 
     /**
@@ -157,8 +196,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun i(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.INFO)) Log.i(tag, msgCallback()) else 0
+    protected fun iImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.i(tag, msgCallback)
     }
 
     /**
@@ -169,8 +208,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun i(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.INFO)) Log.i(tag, msg, tr) else 0
+    protected fun iImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.i(tag, msg, tr)
     }
 
     /**
@@ -181,8 +220,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun i(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.INFO)) Log.i(tag, msgCallback(), tr) else 0
+    protected fun iImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.i(tag, msgCallback, tr)
     }
 
     /**
@@ -192,8 +231,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun i(tag: String?, tr: Throwable): Int {
-        return if (shouldOutput(LogLevel.INFO)) Log.i(tag, tr.toString(), tr) else 0
+    protected fun iImpl(tag: String?, tr: Throwable): Int {
+        return logWrapper.i(tag, tr)
     }
 
     /**
@@ -203,8 +242,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun w(tag: String?, msg: String): Int {
-        return if (shouldOutput(LogLevel.WARN)) Log.w(tag, msg) else 0
+    protected fun wImpl(tag: String?, msg: String): Int {
+        return logWrapper.w(tag, msg)
     }
 
     /**
@@ -214,8 +253,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun w(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.WARN)) Log.w(tag, msgCallback()) else 0
+    protected fun wImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.w(tag, msgCallback)
     }
 
     /**
@@ -226,8 +265,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun w(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.WARN)) Log.w(tag, msg, tr) else 0
+    protected fun wImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.w(tag, msg, tr)
     }
 
     /**
@@ -238,8 +277,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun w(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.WARN)) Log.w(tag, msgCallback(), tr) else 0
+    protected fun wImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.w(tag, msgCallback, tr)
     }
 
     /**
@@ -249,8 +288,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun w(tag: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.WARN)) Log.w(tag, tr) else 0
+    protected fun wImpl(tag: String?, tr: Throwable?): Int {
+        return logWrapper.w(tag, tr)
     }
 
     /**
@@ -260,8 +299,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun e(tag: String?, msg: String): Int {
-        return if (shouldOutput(LogLevel.ERROR)) Log.e(tag, msg) else 0
+    protected fun eImpl(tag: String?, msg: String): Int {
+        return logWrapper.e(tag, msg)
     }
 
     /**
@@ -271,8 +310,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun e(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.ERROR)) Log.e(tag, msgCallback()) else 0
+    protected fun eImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.e(tag, msgCallback)
     }
 
     /**
@@ -283,8 +322,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun e(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.ERROR)) Log.e(tag, msg, tr) else 0
+    protected fun eImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.e(tag, msg, tr)
     }
 
     /**
@@ -295,8 +334,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun e(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.ERROR)) Log.e(tag, msgCallback(), tr) else 0
+    protected fun eImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.e(tag, msgCallback, tr)
     }
 
     /**
@@ -306,8 +345,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun e(tag: String?, tr: Throwable): Int {
-        return if (shouldOutput(LogLevel.ERROR)) Log.e(tag, tr.toString(), tr) else 0
+    protected fun eImpl(tag: String?, tr: Throwable): Int {
+        return logWrapper.e(tag, tr)
     }
 
     /**
@@ -317,8 +356,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msg The message you would like logged.
      */
-    fun wtf(tag: String?, msg: String?): Int {
-        return if (shouldOutput(LogLevel.WTF)) Log.wtf(tag, msg) else 0
+    protected fun wtfImpl(tag: String?, msg: String?): Int {
+        return logWrapper.wtf(tag, msg)
     }
 
     /**
@@ -328,8 +367,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param msgCallback The function which returns message you would like logged.
      */
-    fun wtf(tag: String?, msgCallback: () -> String): Int {
-        return if (shouldOutput(LogLevel.WTF)) Log.wtf(tag, msgCallback()) else 0
+    protected fun wtfImpl(tag: String?, msgCallback: () -> String): Int {
+        return logWrapper.wtf(tag, msgCallback)
     }
 
     /**
@@ -340,8 +379,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msg The message you would like logged.
      * @param tr An exception to log
      */
-    fun wtf(tag: String?, msg: String?, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.WTF)) Log.wtf(tag, msg, tr) else 0
+    protected fun wtfImpl(tag: String?, msg: String?, tr: Throwable?): Int {
+        return logWrapper.wtf(tag, msg, tr)
     }
 
     /**
@@ -352,8 +391,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @param msgCallback The function which returns message you would like logged.
      * @param tr An exception to log
      */
-    fun wtf(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
-        return if (shouldOutput(LogLevel.WTF)) Log.wtf(tag, msgCallback(), tr) else 0
+    protected fun wtfImpl(tag: String?, msgCallback: () -> String, tr: Throwable?): Int {
+        return logWrapper.wtf(tag, msgCallback, tr)
     }
 
     /**
@@ -363,8 +402,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      *            It usually identifies the class or activity where the log call occurs.
      * @param tr An exception to log
      */
-    fun wtf(tag: String?, tr: Throwable): Int {
-        return if (shouldOutput(LogLevel.WTF)) Log.wtf(tag, tr) else 0
+    protected fun wtfImpl(tag: String?, tr: Throwable): Int {
+        return logWrapper.wtf(tag, tr)
     }
 
     /**
@@ -377,13 +416,8 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @return The number of bytes written.
      * @see [Log.println]
      */
-    fun println(priority: Int, tag: String?, msg: String): Int {
-        return if (shouldOutput(LogLevel.fromLogConstant(priority))) {
-            Log.println(priority, tag, msg)
-        } else {
-            0
-        }
-    }
+    fun printlnImpl(priority: Int, tag: String?, msg: String): Int =
+        logWrapper.println(priority, tag, msg)
 
     /**
      * Low-level logging call.
@@ -395,17 +429,6 @@ class LogWrapper(private val minLevel: LogLevel = LogLevel.INFO) {
      * @return The number of bytes written.
      * @see [Log.println]
      */
-    fun println(level: LogLevel, tag: String?, msg: String): Int {
-        return if (shouldOutput(level)) Log.println(level.toLogConstant(), tag, msg) else 0
-    }
-
-    /**
-     * Determine requested log should send
-     *
-     * @param request Log level to send
-     * @return true if requested log should send, otherwise false.
-     */
-    private fun shouldOutput(request: LogLevel): Boolean {
-        return LogLevel.shouldOutput(minLevel, request)
-    }
+    fun printlnImpl(level: LogLevel, tag: String?, msg: String): Int =
+        logWrapper.println(level, tag, msg)
 }
