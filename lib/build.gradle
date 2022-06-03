@@ -49,7 +49,7 @@ publishing {
             // include any transitive dependencies
             pom {
                 withXml {
-                    def dependenciesNode = asNode().appendNode('dependencies')
+                    def dependenciesNode = asNode(null).appendNode('dependencies')
 
                     project.configurations.implementation.allDependencies.each {
                         if (it.group != null || it.name != null || it.version != null || it.name == "unspecified") return
@@ -75,7 +75,7 @@ publishing {
             credentials {
                 /** Create github.properties in root project folder file with
                  ** gpr.usr=GITHUB_USER_ID & gpr.key=PERSONAL_ACCESS_TOKEN
-                 ** Set env variable GPR_USER & GPR_API_KEY if not adding a properties file**/
+                 ** Set env variable GPR_USER & GPR_TOKEN if not adding a properties file**/
 
                 username = githubProperties['gpr.user'] ?: System.getenv("GPR_USER")
                 password = githubProperties['gpr.token'] ?: System.getenv("GPR_TOKEN")
