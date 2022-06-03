@@ -8,7 +8,81 @@
 
 ## Installation
 
-### Android application with Android Studio
+### For GitHub users using Android Studio (using GitHub packages) (recommended)
+
+* This solution is highly recommended as it allows you to view documents and use code completion.
+* You can see [ImoyaAndroidUtil](https://github.com/IceImo-P/ImoyaAndroidUtil) as a typical implementation.
+
+1. Prepare a GitHub personal access token with `read:packages` permission.
+   * If you do not have such a token, please create one by referring to the following page: [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
+2. Create file named `github.properties` in Your project root directory.
+3. Set the following content in `github.properties`:
+
+    ```text
+    gpr.user=[Your GitHub user ID]
+    gpr.token=[Your personal access token]
+    ```
+
+4. Add GitHub Packages repository to:
+    * `settings.gradle` in Your project root directory:
+
+        ```groovy
+        dependencyResolutionManagement {
+            // other settings
+
+            repositories {
+                // other dependency such as google(), mavenCentral(), etc.
+
+                def githubProperties = new Properties()
+                githubProperties.load(new FileInputStream(file("github.properties")))
+                maven {
+                    name = "GitHubPackages-ImoyaAndroidLog"
+                    url = uri("https://maven.pkg.github.com/IceImo-P/ImoyaAndroidLog")
+                    credentials {
+                        username = githubProperties.getProperty("gpr.user") ?: System.getenv("GPR_USER")
+                        password = githubProperties.getProperty("gpr.token") ?: System.getenv("GPR_TOKEN")
+                    }
+                }
+            }
+        }
+        ```
+
+    * or `build.gradle` in Your project root directory:
+
+        ```groovy
+        allprojects {
+            repositories {
+                // other dependency such as google(), mavenCentral(), etc.
+
+                def githubProperties = new Properties()
+                githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+                maven {
+                    name = "GitHubPackages-ImoyaAndroidLog"
+                    url = uri("https://maven.pkg.github.com/IceImo-P/ImoyaAndroidLog")
+                    credentials {
+                        username = githubProperties.getProperty("gpr.user") ?: System.getenv("GPR_USER")
+                        password = githubProperties.getProperty("gpr.token") ?: System.getenv("GPR_TOKEN")
+                    }
+                }
+            }
+
+            // other settings
+        }
+        ```
+
+5. Add dependencies to your module's `build.gradle`:
+
+    ```groovy
+    dependencies {
+        // (other dependencies)
+        implementation 'net.imoya.android.log:imoya-android-log:[version]'
+        // (other dependencies)
+    }
+    ```
+
+6. Sync project with Gradle.
+
+### For non-GitHub users, Android application with Android Studio (using aar)
 
 1. Download `imoya-android-log-release-[version].aar` from [Releases](https://github.com/IceImo-P/ImoyaAndroidLog/releases) page.
 2. Place `imoya-android-log-release-[version].aar` in `libs` subdirectory of your app module.
@@ -24,10 +98,7 @@
 
 4. Sync project with Gradle.
 
-### Android library with Android Studio
-
-* This solution refers to [this post on GitHub](https://github.com/brim-borium/spotify_sdk/issues/99#issuecomment-878910598).
-* You can see [ImoyaAndroidUtil](https://github.com/IceImo-P/ImoyaAndroidUtil) as a typical implementation.
+### For non-GitHub users, Android library with Android Studio (using aar)
 
 1. Download `imoya-android-log-release-[version].aar` from [Releases](https://github.com/IceImo-P/ImoyaAndroidLog/releases) page.
 2. Create `imoya-android-log` subdirectory in your project's root directory.
