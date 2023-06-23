@@ -23,7 +23,6 @@ import androidx.annotation.StringRes
 /**
  * Template class for static log object
  */
-@Suppress("unused")
 open class StaticLogTemplate {
     /**
      * Initialize with [LogLevel]
@@ -37,6 +36,7 @@ open class StaticLogTemplate {
     /**
      * Initialize with [LogLevel.NONE]
      */
+    @Suppress("unused")
     constructor() : this(LogLevel.NONE)
 
     /**
@@ -49,7 +49,6 @@ open class StaticLogTemplate {
      *
      * @param logLevel [LogLevel]
      */
-    @Suppress("weaker")
     protected fun init(logLevel: LogLevel) {
         logWrapper = LogWrapper(logLevel)
     }

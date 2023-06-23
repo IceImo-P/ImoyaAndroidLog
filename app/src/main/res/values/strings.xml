@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">ImoyaAndroidLog</string>
+    <string name="my_log_level">v</string>
+    <string name="button_e">e</string>
+    <string name="button_w">w</string>
+    <string name="button_i">i</string>
+    <string name="button_d">d</string>
+    <string name="button_v">v</string>
 </resources>
